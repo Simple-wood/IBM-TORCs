@@ -491,7 +491,7 @@ ENABLE_TRACTION_CONTROL = True  # Toggle traction control system.
 # ================= HELPER FUNCTIONS =================
 
 def getCornerSensor(S):
-    left_sensors = S['track'][0:9]
+    left_sensors = S['track'][:9]
     right_sensors = S['track'][10:]
 
     min_left = min(left_sensors)
@@ -580,3 +580,4 @@ if __name__ == "__main__":
         drive_modular(C)
         C.respond_to_server()
     C.shutdown()
+
