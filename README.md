@@ -1,5 +1,7 @@
-This is our submission for the IBM early adopter AI race.
-For this we implemented a rule-based AI, modifying the driving code and parameters to achieve the best possible lap time!
-Current best - 2:04:39
+IBM Early Adopter AI Race Submission
 
-fastest.py contains the code for the fastest lap time!
+This repository contains our submission for the IBM Early Adopter AI Race.
+
+We implemented a rule-based AI by modifying the driving logic and tuning parameters to achieve the best possible lap time.
+
+🏎 Current Best Lap Time: 2:04.39
