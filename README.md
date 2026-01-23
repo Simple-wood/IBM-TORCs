@@ -4,4 +4,6 @@ This repository contains our submission for the IBM Early Adopter AI Race.
 
 We implemented a rule-based AI by modifying the driving logic and tuning parameters to achieve the best possible lap time.
 
-🏎 Current Best Lap Time: 2:04.39
+🏎 Current Best Lap Time: 2:04.39 (solo)
+
+
