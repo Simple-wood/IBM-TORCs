@@ -477,42 +477,86 @@ def drive_example(c):
 # MODULAR DRIVE LOGIC WITH USER PARAMETERS  #
 #############################################
 
-import math
-
 # ================= USER CONFIGURABLE PARAMETERS =================
 TARGET_SPEED = 120  # Target speed in km/h. Increasing this makes the car go faster but may reduce stability.
-STEER_GAIN = 70  # Steering sensitivity. Higher values make the car turn more aggressively.
-CENTERING_GAIN = 1.85  # How strongly the car corrects its position toward the center of the track.
-BRAKE_THRESHOLD = 0.3  # Angle threshold for braking. Lower values brake earlier.
+STEER_GAIN = 73  # Steering sensitivity. Higher values make the car turn more aggressively.
+CENTERING_GAIN = 0.906  # How strongly the car corrects its position toward the center of the track.
+BRAKE_THRESHOLD = 0.689  # Angle threshold for braking. Lower values brake earlier.
 GEAR_SPEEDS = [0, 50, 80, 120, 150, 200]  # Speed thresholds for gear shifting.
 ENABLE_TRACTION_CONTROL = True  # Toggle traction control system.
+# =================================================================
+
+SAFE_GENTLE_CORNER_SPEED = 155.594 # Safe speed in km/h for a gentle corner
+SAFE_SHARP_CORNER_SPEED = 65 # Safe speed in km/h for a sharp corner
+TARGET_STRAIGHT_SPEED = 207.887 # Target speed in km/h for distances deemed a straight (We can safely acheieve a high speed)
+CORNER_READING = 5 # Distance that signifies that the car is in a corner
+SLOW_DOWN_DISTANCE = 60 # Distance that signifies a corner is approaching
+STRAIGHT_DISTANCE = 120 # Distance of a 'straight' that we can safely achieve a high speed
+BRAKING_INTENSITY = 0.3 # How much we brake by [0-1.0]
+STEERING_EFFECT = 2.5 # How much the steering effects the acceleration
 
 # ================= HELPER FUNCTIONS =================
 
-def getCornerSensor(S):
+# Gets the all of the sensor data for the left sensors and right sensors
+# Returns the lowest reading between the data
+#
+def get_min_sensor_data(S):
     left_sensors = S['track'][:9]
     right_sensors = S['track'][10:]
 
-    mn_left = min(left_sensors)
-    mn_right = min(right_sensors)
-    min_reading = min(mn_left, mn_right)
+    min_left = min(left_sensors)
+    min_right = min(right_sensors)
+    min_reading = min(min_left, min_right)
 
     return min_reading
 
-def calculateSeverity(S):
-    forwards = S['track'][9]
-    left = S['track'][0]
-    right = S['track'][18]
-
-    severity = (right - left) / forwards
-
-    return abs(severity)
-
-def isCorner(S, min_reading):
-    if min_reading < 5 or S['track'][9] < S['speedX'] * 0.7:
+# Checks if there is a corner coming up
+#
+def is_corner(S, min_reading):
+    if min_reading < CORNER_READING or S['track'][9] < S['speedX'] * 0.65:
         return True
     
     return False
+
+# Checks if we have the right amount of forwards distance avaliable (a straight) and
+# if our current speed is less than the target speed - this is so we can modify the target speed to a higher value
+#
+def is_straight(current_speed, forward_length):
+    if current_speed >= (TARGET_SPEED - 5) and forward_length > STRAIGHT_DISTANCE:
+        return True
+    
+    return False
+
+# Checks if the car should start to stop accelerating
+#
+def hold_acceleration(S, safe_speed):
+    min_sensor_data = get_min_sensor_data(S)
+
+    if(is_corner(S, min_sensor_data) and S['speedX'] > safe_speed):
+        return True
+    
+    return False
+
+# Checks if the car should start slowing down - and therefore increase the braking to an extent
+#
+def slow_down(S):
+    max_forwards_sensors = max(S['track'][7:12])
+
+    if max_forwards_sensors < S['speedX'] * 0.65:
+        return True
+    
+    return False
+
+# Gets the safe speed of a corner based on how much track is in front of the car
+# 
+def calculate_corner_speed(S):
+    max_forwards_sensors = max(S['track'][8:11])
+    safe_speed = SAFE_GENTLE_CORNER_SPEED
+
+    if max_forwards_sensors < SLOW_DOWN_DISTANCE:
+        safe_speed = SAFE_SHARP_CORNER_SPEED
+
+    return safe_speed
 
 def calculate_steering(S):
     steer = (S['angle'] * STEER_GAIN / PI) - (S['trackPos'] * CENTERING_GAIN)
@@ -521,15 +565,17 @@ def calculate_steering(S):
 
 def calculate_throttle(S, R):
     target_speed = TARGET_SPEED
-    if S['speedX'] >= (TARGET_SPEED - 5) and S['track'][9] > 120:
-        target_speed = 180
+    safe_speed = calculate_corner_speed(S)
 
-    if S['speedX'] < target_speed - (R['steer'] * 2.5):
+    if is_straight(S['speedX'], S['track'][9]):
+        target_speed = TARGET_STRAIGHT_SPEED
+
+    if S['speedX'] < target_speed - (R['steer'] * STEERING_EFFECT):
         accel = min(1.0, R['accel'] + 0.4)
     else:
         accel = max(0.0, R['accel'] - 0.2)
 
-    if(isCorner(S, getCornerSensor(S)) and S['speedX'] > 65):
+    if hold_acceleration(S, safe_speed):
         accel = max(0.0, R['accel'] - 0.2)
 
     if S['speedX'] < 10:
@@ -540,9 +586,9 @@ def calculate_throttle(S, R):
 def apply_brakes(S):
     brake = 0.0
     if abs(S['angle']) > BRAKE_THRESHOLD:
-        brake = 0.3
+        brake = BRAKING_INTENSITY
 
-    if max(S['track'][7:12]) < (S['speedX'] * 0.65):
+    if slow_down(S):
         brake += 0.1
 
     return min(1.0, brake)
