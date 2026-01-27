@@ -6,6 +6,7 @@ This repository contains my submission for the **IBM Early Adopter AI Race Leagu
 
 
 
+
 ## File overview
 
 ### `fastest.py`
@@ -78,12 +79,13 @@ Keeps performance tracking tidy so the rest of the code can stay focused on driv
 
 ## Typical workflow
 
-1. Start TORCS using `startup.py`
+(Ensure that TORCs is installed first before any of this)
+
+1. Start TORCS using `startup.py` - make sure to update the file paths!
 2. Hack on ideas in `experimental.py`
 3. Log lap times to `recordings.csv`
-4. Compare results using `logger.py`
-5. Promote the best parameters to `fastest.py`
-6. Repeat until victory or exhaustion
+4. Promote the best parameters to `fastest.py`
+5. Repeat until victory or exhaustion
 
 ---
 
@@ -92,3 +94,4 @@ Keeps performance tracking tidy so the rest of the code can stay focused on driv
 This project was developed as part of the **IBM Early Adopter AI Race League**. The primary objective is to explore autonomous driving strategies, evaluate their impact on lap time performance, and refine the driving logic for competitive racing in TORCS.
 
 ---
+
