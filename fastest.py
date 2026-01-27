@@ -481,14 +481,14 @@ def drive_example(c):
 TARGET_SPEED = 120  # Target speed in km/h. Increasing this makes the car go faster but may reduce stability.
 STEER_GAIN = 73  # Steering sensitivity. Higher values make the car turn more aggressively.
 CENTERING_GAIN = 0.906  # How strongly the car corrects its position toward the center of the track.
-BRAKE_THRESHOLD = 0.689  # Angle threshold for braking. Lower values brake earlier.
+BRAKE_THRESHOLD = 0.5  # Angle threshold for braking. Lower values brake earlier.
 GEAR_SPEEDS = [0, 50, 80, 120, 150, 200]  # Speed thresholds for gear shifting.
 ENABLE_TRACTION_CONTROL = True  # Toggle traction control system.
 # =================================================================
 
-SAFE_GENTLE_CORNER_SPEED = 155.594 # Safe speed in km/h for a gentle corner
+SAFE_GENTLE_CORNER_SPEED = 156.194 # Safe speed in km/h for a gentle corner
 SAFE_SHARP_CORNER_SPEED = 65 # Safe speed in km/h for a sharp corner
-TARGET_STRAIGHT_SPEED = 207.887 # Target speed in km/h for distances deemed a straight (We can safely acheieve a high speed)
+TARGET_STRAIGHT_SPEED = 256.266 # Target speed in km/h for distances deemed a straight (We can safely acheieve a high speed)
 CORNER_READING = 5 # Distance that signifies that the car is in a corner
 SLOW_DOWN_DISTANCE = 60 # Distance that signifies a corner is approaching
 STRAIGHT_DISTANCE = 120 # Distance of a 'straight' that we can safely achieve a high speed
