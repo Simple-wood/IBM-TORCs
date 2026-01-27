@@ -4,6 +4,7 @@ This repository contains my submission for the **IBM Early Adopter AI Race Leagu
 
 🏎 Current Best Lap Time: 2:01:97
 
+Our blog can found in IBM TORCs blog.pdf!
 
 
 
@@ -94,6 +95,7 @@ Keeps performance tracking tidy so the rest of the code can stay focused on driv
 This project was developed as part of the **IBM Early Adopter AI Race League**. The primary objective is to explore autonomous driving strategies, evaluate their impact on lap time performance, and refine the driving logic for competitive racing in TORCS.
 
 ---
+
 
 
 
