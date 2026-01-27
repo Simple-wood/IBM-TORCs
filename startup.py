@@ -4,11 +4,11 @@ import time
 import experimental
 from logger import LogData
 
-TORCS_PATH = r"INCLUDE PATH TO TORCS (wtorcs)"
-WORKING_DIRECTORY_PATH = r"INCLUDE WORKING DIRECTORY TO TORCS"
+TORCS_PATH = r"ADD path to wtorcs"
+WORKING_DIRECTORY_PATH = r"ADD working directory path for TORCs"
 CLICK_X = 399
 CLICK_Y = 144
-STEPS = 15
+STEPS = 10
 
 # Opens torcs and runs the drive script
 #
@@ -21,9 +21,11 @@ def start_lap():
     pyautogui.moveTo(CLICK_X, CLICK_Y)
     pyautogui.doubleClick()
     pyautogui.click()
+
+    with pyautogui.hold('shift'):
+        pyautogui.press('+', presses=7)
     
     experimental.run_lap(logger)
 
 for x in range(STEPS):
     start_lap()
-
