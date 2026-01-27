@@ -4,8 +4,8 @@ import time
 import experimental
 from logger import LogData
 
-TORCS_PATH = r"c:\Users\joesa\Downloads\torcs (1)\torcs\wtorcs.exe"
-WORKING_DIRECTORY_PATH = r"c:\Users\joesa\Downloads\torcs (1)\torcs"
+TORCS_PATH = r"INCLUDE PATH TO TORCS (wtorcs)"
+WORKING_DIRECTORY_PATH = r"INCLUDE WORKING DIRECTORY TO TORCS"
 CLICK_X = 399
 CLICK_Y = 144
 STEPS = 15
@@ -26,3 +26,4 @@ def start_lap():
 
 for x in range(STEPS):
     start_lap()
+
