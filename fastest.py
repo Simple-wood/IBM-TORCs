@@ -478,22 +478,22 @@ def drive_example(c):
 #############################################
 
 # ================= USER CONFIGURABLE PARAMETERS =================
-TARGET_SPEED = 120  # Target speed in km/h. Increasing this makes the car go faster but may reduce stability.
-STEER_GAIN = 73  # Steering sensitivity. Higher values make the car turn more aggressively.
-CENTERING_GAIN = 0.906  # How strongly the car corrects its position toward the center of the track.
-BRAKE_THRESHOLD = 0.5  # Angle threshold for braking. Lower values brake earlier.
+TARGET_SPEED = 160  # Target speed in km/h. Increasing this makes the car go faster but may reduce stability.
+STEER_GAIN = 30  # Steering sensitivity. Higher values make the car turn more aggressively.
+CENTERING_GAIN = 0.2  # How strongly the car corrects its position toward the center of the track.
+BRAKE_THRESHOLD = 0.4  # Angle threshold for braking. Lower values brake earlier.
 GEAR_SPEEDS = [0, 50, 80, 120, 150, 200]  # Speed thresholds for gear shifting.
 ENABLE_TRACTION_CONTROL = True  # Toggle traction control system.
 # =================================================================
 
-SAFE_GENTLE_CORNER_SPEED = 156.194 # Safe speed in km/h for a gentle corner
+SAFE_GENTLE_CORNER_SPEED = 140 # Safe speed in km/h for a gentle corner
 SAFE_SHARP_CORNER_SPEED = 65 # Safe speed in km/h for a sharp corner
-TARGET_STRAIGHT_SPEED = 256.266 # Target speed in km/h for distances deemed a straight (We can safely acheieve a high speed)
-CORNER_READING = 5 # Distance that signifies that the car is in a corner
+TARGET_STRAIGHT_SPEED = 194 # Target speed in km/h for distances deemed a straight (We can safely acheieve a high speed)
+CORNER_READING = 2.0 # Distance that signifies that the car is in a corner
 SLOW_DOWN_DISTANCE = 60 # Distance that signifies a corner is approaching
 STRAIGHT_DISTANCE = 120 # Distance of a 'straight' that we can safely achieve a high speed
 BRAKING_INTENSITY = 0.3 # How much we brake by [0-1.0]
-STEERING_EFFECT = 2.5 # How much the steering effects the acceleration
+STEERING_EFFECT = 1.6 # How much the steering effects the acceleration
 
 # ================= HELPER FUNCTIONS =================
 
@@ -542,7 +542,7 @@ def hold_acceleration(S, safe_speed):
 def slow_down(S):
     max_forwards_sensors = max(S['track'][7:12])
 
-    if max_forwards_sensors < S['speedX'] * 0.65:
+    if max_forwards_sensors < S['speedX'] * 0.60:
         return True
     
     return False
@@ -560,6 +560,17 @@ def calculate_corner_speed(S):
 
 def calculate_steering(S):
     steer = (S['angle'] * STEER_GAIN / PI) - (S['trackPos'] * CENTERING_GAIN)
+
+    if is_corner(S, get_min_sensor_data(S)):
+        left_avg = sum(S['track'][:9]) / 8
+        right_avg = sum(S['track'][10:]) / 8
+
+        reading = right_avg - left_avg
+
+        if reading < 0:
+            steer += 0.46
+        elif reading > 0:
+            steer -= 0.46
 
     return max(-1, min(1, steer))
 
@@ -579,7 +590,7 @@ def calculate_throttle(S, R):
         accel = max(0.0, R['accel'] - 0.2)
 
     if S['speedX'] < 10:
-        accel += 1 / (S['speedX'] + 0.1)
+        accel = 1.0
 
     return max(0.0, min(1.0, accel))
 
@@ -614,6 +625,7 @@ def drive_modular(c):
     R['brake'] = apply_brakes(S)
     R['accel'] = traction_control(S, R['accel'])
     R['gear'] = shift_gears(S)
+
     return
 
 # ================= MAIN LOOP =================
