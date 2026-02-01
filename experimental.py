@@ -483,11 +483,11 @@ GEAR_SPEEDS = [0, 50, 80, 120, 150, 200]  # Speed thresholds for gear shifting.
 ENABLE_TRACTION_CONTROL = True  # Toggle traction control system.
 # =================================================================
 
-CORNER_READING = 5 # Distance that signifies that the car is in a corner
+CORNER_READING = 2.0 # Distance that signifies that the car is in a corner
 SLOW_DOWN_DISTANCE = 60 # Distance that signifies a corner is approaching
 STRAIGHT_DISTANCE = 120 # Distance of a 'straight' that we can safely achieve a high speed
-BRAKING_INTENSITY = 0.1 # How much we brake by [0-1.0]
-STEERING_EFFECT = 2.5 # How much the steering effects the acceleration
+BRAKING_INTENSITY = 0.2 # How much we brake by [0-1.0]
+STEERING_EFFECT = 1.75 # How much the steering effects the acceleration
 
 # ================= HELPER FUNCTIONS =================
 
@@ -536,7 +536,7 @@ def hold_acceleration(S, safe_speed):
 def slow_down(S):
     max_forwards_sensors = max(S['track'][7:12])
 
-    if max_forwards_sensors < S['speedX'] * 0.65:
+    if max_forwards_sensors < S['speedX'] * 0.60:
         return True
     
     return False
@@ -554,6 +554,17 @@ def calculate_corner_speed(S, SGS, SSC):
 
 def calculate_steering(S, SG, CG):
     steer = (S['angle'] * SG / PI) - (S['trackPos'] * CG)
+
+    if is_corner(S, get_min_sensor_data(S)):
+        left_avg = sum(S['track'][:9]) / 8
+        right_avg = sum(S['track'][10:]) / 8
+
+        reading = right_avg - left_avg
+
+        if reading < 0:
+            steer += 0.46
+        elif reading > 0:
+            steer -= 0.46
 
     return max(-1, min(1, steer))
 
