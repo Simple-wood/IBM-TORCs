@@ -565,11 +565,11 @@ def calculate_steering(S):
         left_avg = sum(S['track'][:9]) / 8
         right_avg = sum(S['track'][10:]) / 8
 
-        reading = right_avg - left_avg
+        bias = right_avg - left_avg
 
-        if reading < 0:
+        if bias < 0:
             steer += 0.46
-        elif reading > 0:
+        elif bias > 0:
             steer -= 0.46
 
     return max(-1, min(1, steer))
@@ -636,3 +636,4 @@ if __name__ == "__main__":
         drive_modular(C)
         C.respond_to_server()
     C.shutdown()
+
