@@ -6,8 +6,8 @@ from logger import LogData
 
 TORCS_PATH = r"ADD path to wtorcs"
 WORKING_DIRECTORY_PATH = r"ADD working directory path for TORCs"
-CLICK_X = 399
-CLICK_Y = 144
+CLICK_X = 399 # Based on 640x480 resolution
+CLICK_Y = 144 # Based on 640x480 resolution
 STEPS = 10
 
 # Opens torcs and runs the drive script
@@ -29,3 +29,4 @@ def start_lap():
 
 for x in range(STEPS):
     start_lap()
+
