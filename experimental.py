@@ -559,11 +559,11 @@ def calculate_steering(S, SG, CG):
         left_avg = sum(S['track'][:9]) / 8
         right_avg = sum(S['track'][10:]) / 8
 
-        reading = right_avg - left_avg
+        bias = right_avg - left_avg
 
-        if reading < 0:
+        if bias < 0:
             steer += 0.46
-        elif reading > 0:
+        elif bias > 0:
             steer -= 0.46
 
     return max(-1, min(1, steer))
@@ -654,3 +654,4 @@ def run_lap(logger):
                     SAFE_SHARP_CORNER_SPEED, TARGET_STRAIGHT_SPEED, S['curLapTime']]
         
     logger.log_data(statistics)
+
